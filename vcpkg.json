@@ -1,0 +1,11 @@
+{
+  "name": "my-cross-platform-project",
+  "version": "1.0.0",
+  "dependencies": [
+    "sdl2",
+    "opengl",
+    "glfw",
+    "glew",
+    "glaw"
+  ]
+}
