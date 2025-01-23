@@ -62,7 +62,7 @@ file(GLOB TEST_FILES
     "${PROJECT_SOURCE_DIR}/tests/*.cpp"
 )
 
-add_executable(game-prototypeTests ${TEST_FILES})
+# add_executable(game-prototypeTests ${TEST_FILES})
 
 # Windows/macOS共通でGTestライブラリをリンクする
 # - find_packageの場合

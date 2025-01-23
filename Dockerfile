@@ -12,7 +12,10 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     build-essential \
     clang \
+    gcc \
+    g++ \
     cmake \
+    ninja-build \
     git \
     curl \
     zip \
@@ -39,15 +42,17 @@ RUN echo "export PATH=/vcpkg:$PATH" >> /etc/profile
 # vcpkg.json をコピー
 COPY ../vcpkg.json /vcpkg/vcpkg.json
 
+# アーキテクチャ情報の取得
+ARG TARGETARCH
+
 # アーキテクチャに応じたトリプレットの設定
-RUN ARCH=$(uname -m) && \
-    case "$ARCH" in \
-    x86_64) TRIPLET="x64-linux" ;; \
-    aarch64) TRIPLET="arm64-linux" ;; \
-    *) echo "Unsupported architecture: $ARCH"; exit 1 ;; \
-    esac && \
-    cd /vcpkg && \
-    ./vcpkg install --triplet=$TRIPLET --x-manifest-root=/vcpkg
+RUN case "$TARGETARCH" in \
+  amd64) TRIPLET="x64-linux" ;; \
+  arm64) TRIPLET="arm64-linux" ;; \
+  *) echo "Unsupported architecture: $TARGETARCH"; exit 1 ;; \
+  esac && \
+  cd /vcpkg && \
+  ./vcpkg install --triplet=$TRIPLET --x-manifest-root=/vcpkg
 
 # 環境変数の設定
 ENV VCPKG_ROOT=/vcpkg
