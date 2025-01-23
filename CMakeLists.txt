@@ -23,9 +23,9 @@ find_package(glfw3 REQUIRED)
 if (APPLE)
     find_library(OpenGL_LIBRARY OpenGL)
     set(OPENGL_LIBS ${OpenGL_LIBRARY})
-elseif (WIN64)
+elseif (UNIX AND NOT APPLE)
     find_package(OpenGL REQUIRED)
-    set(OPENGL_LIBS openg64)
+    set(OPENGL_LIBS OpenGL::GL)
 endif()
 
 # ソースファイルの指定

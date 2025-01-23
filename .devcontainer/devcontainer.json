@@ -1,20 +1,19 @@
 {
   "name": "game-prototype",
   "build": {
-      "dockerfile": "dockerfile"
-  },
-  "settings": {
-      "terminal.integrated.shell.linux": "/bin/bash"
+      "dockerfile": "../Dockerfile"
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-vscode.cpptools",
         "ms-vscode.cmake-tools",
-        "ms-vscode.vscode-typescript-tslint-plugin"
-      ]
+      ],
+      "settings": {
+          "terminal.integrated.shell.linux": "/bin/bash"
+      }
     }
   },
-  "postCreateCommand": "cmake -B build -S . && cmake --build build",
+  // "postCreateCommand": "cmake -B build -S . && cmake --build build",
   "remoteUser": "vscode"
 }
