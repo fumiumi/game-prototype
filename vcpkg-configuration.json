@@ -1,0 +1,23 @@
+{
+  "default-registry": {
+    "kind": "git",
+    "repository": "https://github.com/microsoft/vcpkg",
+    "baseline": "latest"
+  },
+  "registries": [],
+  "overlays": [],
+  "default-triplet": "x64-windows",
+  "host-triplet": "x64-windows",
+  "triplets": {
+    "x64-windows": {
+      "compiler": "msvc",
+      "platform": "windows",
+      "architecture": "x64"
+    },
+    "arm64-osx": {
+      "compiler": "clang",
+      "platform": "osx",
+      "architecture": "arm64"
+    }
+  }
+}

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <glad/glad.h>  // GLADのヘッダ
 #include <GLFW/glfw3.h> // GLFWのヘッダ
 
 #include "Game.h"
@@ -24,14 +23,15 @@ int main()
         return -1;
     }
 
-    // OpenGLバージョン指定 (例: 3.3 Core)
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+// Vulkanに移行する
+//     // OpenGLバージョン指定 (例: 3.3 Core)
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+//     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+//     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#if __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+// #if __APPLE__
+//     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+// #endif
 
     // ウィンドウ作成
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "game-prototype", nullptr, nullptr);
@@ -42,15 +42,6 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
-
-    // GLADの初期化
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cerr << "Failed to initialize GLAD.\n";
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return -1;
-    }
 
     // 垂直同期の設定（任意）
     glfwSwapInterval(1);

@@ -30,6 +30,8 @@ vcpkg install --triplet=x64-windows
 vcpkg install --triplet=x64-osx
 ```
 
+既定の vcpkg-configuration.json ファイルには 基準 制約が導入され、プロジェクトで使用する必要がある依存関係の最小バージョンが指定されます。 
+
 ### コンパイラ設定の統一
 
 CMakeを利用してコンパイラ設定を明示
