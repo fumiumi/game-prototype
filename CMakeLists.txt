@@ -72,7 +72,7 @@ if(WIN32)
     glfw3
     glfw3_mt
     PATHS
-    ${GLFW_ROOT}/lib-vc2017
+    ${GLFW_ROOT}/lib-mingw-w64
     DOC
     "The GLFW library"
   )

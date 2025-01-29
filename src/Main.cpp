@@ -109,7 +109,7 @@ int main()
         // game.Render();
 
         // バッファを入れ替え
-        glfwSwapBuffers(window);
+        // glfwSwapBuffers(window);
     }
 
     // 終了処理
