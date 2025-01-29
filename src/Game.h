@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "Entity.h"
+#include "Actor.h"
 
 class Game
 {
@@ -22,6 +22,4 @@ public:
     void Shutdown();
 
 private:
-    // 例: ゲーム内に存在するエンティティのリスト
-    std::vector<std::unique_ptr<Entity>> m_entities;
 };

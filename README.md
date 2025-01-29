@@ -9,28 +9,6 @@ os間で互換性を担保するために、`CMake`と`vcpkg`を利用する。v
 ./vcpkg install sdl2 opengl
 ```
 
-### vcpkg.json を使う
-
-例：
-
-```
-{
-  "name": "my-cross-platform-project",
-  "version": "1.0.0",
-  "dependencies": [
-    "sdl2",
-    "opengl"
-  ]
-}
-
-```
-
-```
-vcpkg install --triplet=x64-windows
-vcpkg install --triplet=x64-osx
-```
-
-既定の vcpkg-configuration.json ファイルには 基準 制約が導入され、プロジェクトで使用する必要がある依存関係の最小バージョンが指定されます。 
 
 ### コンパイラ設定の統一
 
@@ -70,6 +48,10 @@ endif()
 
 スクリプトでビルドプロセスを統一
 Windows用とmacOS用のビルドスクリプトをリポジトリに含めます。
+
+```bash
+cmake -G "Ninja" -B build
+```
 
 例: Windows（build.bat）
 

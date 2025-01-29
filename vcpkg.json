@@ -1,7 +1,0 @@
-{
-  "name": "game-prototype",
-  "version": "1.0.0",
-  "dependencies": [
-    "glog"
-  ]
-}
