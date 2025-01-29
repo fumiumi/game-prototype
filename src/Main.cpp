@@ -86,10 +86,10 @@ int main()
     glfwSwapInterval(1);
 
     // ビューポート設定
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    // glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // 背景色（クリアカラー）
-    glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+    // glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
 
     // ゲームインスタンスを生成
     // Game game;
@@ -105,7 +105,7 @@ int main()
         // game.Update();
 
         // // 描画処理
-        glClear(GL_COLOR_BUFFER_BIT);
+        // glClear(GL_COLOR_BUFFER_BIT);
         // game.Render();
 
         // バッファを入れ替え
