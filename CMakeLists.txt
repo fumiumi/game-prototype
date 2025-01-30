@@ -14,16 +14,22 @@ configure_file(GamePrototypeConfig.h.in GamePrototypeConfig.h)
 
 # ソースファイルの指定
 # ソースファイルのフォルダを変数に格納
-set(SOURCE_DIR src)
-# HACK: 公式ドキュメントでは明示的なファイル指定を推奨しています。
-# file(GLOB_RECURSE SRC_FILES
-#     "${PROJECT_SOURCE_DIR}/src/*.cpp"
-#     "${PROJECT_SOURCE_DIR}/src/*.c"
-# )
+set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
+# NOTE: 公式ドキュメントでは明示的なファイル指定を推奨しています。
 # とりあえずMain.cppだけ
-add_executable(game-prototype ${SOURCE_DIR}/Main.cpp)
+add_executable(game-prototype 
+${SOURCE_DIR}/Main.cpp
+)
 
+# テストターゲットを作成
+add_library(test-target 
+  ${SOURCE_DIR}/sample/SampleMath.cpp
+)
+target_include_directories(test-target PUBLIC ${SOURCE_DIR})
+
+# エイリアスの作成
+add_library(Test::Target ALIAS test-target)
 
 # Build typeが指定されていない場合はDebugにしておく（任意）
 if(NOT CMAKE_BUILD_TYPE)
@@ -101,7 +107,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 message(STATUS "GLM found: ${glm_DIR}")
 
 
-# --- GTestを使ったテストビルドの設定 ---
+# --- テストの追加 ---
+enable_testing()
+add_subdirectory(tests)
 
 # Google Test
 # include(FetchContent)
@@ -114,9 +122,7 @@ message(STATUS "GLM found: ${glm_DIR}")
 
 # # テスト用ターゲットの設定
 # # CMake only generates tests if the enable_testing() command has been invoked
-# enable_testing()
 # # TestMain.cppでRUN_ALL_TESTSしているので、TestMain.cppだけを指定すればよい
-# add_executable(${PROJECT_NAME}_tests tests/TestMain.cpp)
 # target_link_libraries(${PROJECT_NAME}_tests PRIVATE gtest gtest_main ${PROJECT_NAME})
 # # COMMAND: Specify the test command-line to run
 # add_test(
