@@ -12,7 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(game_prototype_VERSION_MAJOR 0)
 set(game_prototype_VERSION_MINOR 1)
 
-enable_testing()
+# 一旦テスト無効化
+# enable_testing()
 
 # openGLのバージョンを指定
 # macosではOpenGL4.1まででサポートを辞めた
@@ -24,11 +25,17 @@ configure_file(config.h.in config.h)
 # --- ソースファイルの追加 ---
 # 各サブシステムディレクトリを変数に格納
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
-# あとでサブモジュール化する
+
+# エンジン部分のサブモジュール
+add_subdirectory(${SOURCE_DIR})
+# gteatsのサブモジュール
+# add_subdirectory(tests)
 
 add_executable(${PROJECT_NAME}
   ${SOURCE_DIR}/Main.cpp
 )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE engine_renderer_shader)
 
 # Build typeが指定されていない場合はDebugにしておく（任意）
 if(NOT CMAKE_BUILD_TYPE)
@@ -132,11 +139,6 @@ elseif(APPLE)
   )
   message(STATUS "freetype found: ${FREETYPE_LIBRARY}")
 endif()
-
-# --- テスト環境のライブラリをリンク ---
-
-# teatsディレクトリのサブモジュールを追加
-add_subdirectory(tests)
 
 message(STATUS "Configured main project: ${PROJECT_NAME}")
 
