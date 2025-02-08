@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "SampleMath.h"
+#include "../../src/sandbox/SampleMath.h"
 
 TEST(MathTest, Add) {
   SampleMath math;

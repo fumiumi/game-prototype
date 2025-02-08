@@ -1,140 +1,149 @@
-# --- お作法 ---
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.23)
 
 # プロジェクト名
 # ${PROJECT_NAME}でプロジェクト名を参照できる
-project(game-prototype)
+project(game_prototype)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --- プロジェクトの設定 ---
-# 設定用のヘッダファイルをコピー
-configure_file(GamePrototypeConfig.h.in GamePrototypeConfig.h)
+# config
+# ゲームのバージョンを指定
+set(game_prototype_VERSION_MAJOR 0)
+set(game_prototype_VERSION_MINOR 1)
 
-# ソースファイルの指定
-# ソースファイルのフォルダを変数に格納
+enable_testing()
+
+# openGLのバージョンを指定
+# macosではOpenGL4.1まででサポートを辞めた
+set(OpenGL_VERSION_MAJOR 4)
+set(OpenGL_VERSION_MINOR 1)
+
+configure_file(config.h.in config.h)
+
+# --- ソースファイルの追加 ---
+# 各サブシステムディレクトリを変数に格納
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
+# あとでサブモジュール化する
 
-# NOTE: 公式ドキュメントでは明示的なファイル指定を推奨しています。
-# とりあえずMain.cppだけ
-add_executable(game-prototype 
-${SOURCE_DIR}/Main.cpp
+add_executable(${PROJECT_NAME}
+  ${SOURCE_DIR}/Main.cpp
 )
-
-# テストターゲットを作成
-add_library(test-target 
-  ${SOURCE_DIR}/sample/SampleMath.cpp
-)
-target_include_directories(test-target PUBLIC ${SOURCE_DIR})
-
-# エイリアスの作成
-add_library(Test::Target ALIAS test-target)
 
 # Build typeが指定されていない場合はDebugにしておく（任意）
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 # --- ライブラリの検索とリンク ---
 
-# 1. Vulkan
-if(WIN32)
-    # WIN32は、CMakeでWindows全般（32ビットおよび64ビット）を示すリテラル
-    find_package(Vulkan REQUIRED)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${Vulkan_LIBRARIES})
-    message(STATUS "Vulkan found on Windows: ${Vulkan_LIBRARIES}")
-elseif(APPLE)
-    # macOSの場合 (MoltenVKを使用)
-    set(VULKAN_SDK "/path/to/vulkan-sdk-macos") # まずmacos用のVulkan SDKのパスを変数化
-    set(Vulkan_INCLUDE_DIRS "${VULKAN_SDK}/include") # インクルードファイルのパス
-    set(Vulkan_LIBRARIES "${VULKAN_SDK}/lib/libMoltenVK.dylib") # MoltenVKのライブラリパス
-    target_include_directories(${PROJECT_NAME} PRIVATE ${Vulkan_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${Vulkan_LIBRARIES})
-    message(STATUS "Vulkan configured for macOS using MoltenVK")
+# --- 外部ライブラリの検索パスを追加 ---
+# OpenGL
+find_package(OpenGL REQUIRED)
+if(APPLE)
+  target_link_libraries(${PROJECT_NAME} PRIVATE "-framework OpenGL")
 else()
-    # APIの取得に失敗したらエラー
-    message(FATAL_ERROR "Unsupported operating system")
+  target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
 endif()
+message(STATUS "OpenGL found: ${OPENGL_gl_LIBRARY}")
 
-# とりあえずwindowsのみ
+# GLFW
+find_package(glfw3 CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+message(STATUS "GLFW found: ${GLFW_LIBRARY}")
+
+# OpenAL-Soft
 if(WIN32)
-    # 2. GLFW
-  # まずパスを変数に格納
-  set(GLFW_ROOT "C:/Program Files/glfw-3.4.bin.WIN64")
-  # ヘッダファイルを探す
-  find_path(GLFW_INCLUDE_DIR
-    NAMES
-    GLFW/glfw3.h
-    PATHS
-    ${GLFW_ROOT}/include
-    DOC
-    "The directory where GL/glfw.h resides"
-  )
-  # ライブラリファイルを探す
-  find_library(GLFW_LIBRARY
-    NAMES
-    glfw3
-    glfw3_mt
-    PATHS
-    ${GLFW_ROOT}/lib-mingw-w64
-    DOC
-    "The GLFW library"
-  )
-  target_include_directories(${PROJECT_NAME} PUBLIC ${GLFW_INCLUDE_DIR})
-  target_link_libraries(${PROJECT_NAME} PRIVATE ${GLFW_LIBRARY})
-  message(STATUS "GLFW found on Windows: ${GLFW_LIBRARY}")
-
-    # # 3. glm
-    # set(glm_DIR "C:/Program Files/glm/build/CMakeFiles/Export/b5cfde51c75c86f20e779cf9e61c2ee3")
-    # find_package(glm CONFIG REQUIRED)
-    # target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+  find_package(OpenAL CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
+  message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
+elseif(APPLE)
+  find_package(OpenAL REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
+  message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
 endif()
 
-# 3. glm
-include(FetchContent)
+# glm
+if(WIN32)
+  find_package(glm CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+  message(STATUS "GLM found: ${GLM_LIBRARY}")
+elseif(APPLE)
+  find_package(glm REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+  message(STATUS "GLM found: ${GLM_LIBRARY}")
+endif()
 
-FetchContent_Declare(
-	glm
-	GIT_REPOSITORY	https://github.com/g-truc/glm.git
-	GIT_TAG 	bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
+# --- externディレクトリのライブラリをリンク ---
+# externディレクトリを変数に格納
+set(EXTERN_DIR ${PROJECT_SOURCE_DIR}/extern)
+
+# GLAD
+if(APPLE)
+  set(GLAD_LIBRARY ${EXTERN_DIR}/glad)
+  target_include_directories(${PROJECT_NAME} PRIVATE ${GLAD_LIBRARY}/include)
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${GLAD_LIBRARY}/library/libglad.a)
+  message(STATUS "GLAD found: ${GLAD_LIBRARY}")
+elseif(WIN32)
+  find_package(glad CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
+  message(STATUS "GLAD found: ${GLAD_LIBRARY}")
+endif()
+
+# json
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${EXTERN_DIR}/json
 )
+message(STATUS "json.hpp found")
 
-FetchContent_MakeAvailable(glm)
+# stb_image
+target_include_directories(${PROJECT_NAME} PRIVATE
+  ${EXTERN_DIR}/stb
+)
+message(STATUS "stb found")
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-message(STATUS "GLM found: ${glm_DIR}")
+# --- ローカル環境のライブラリをリンク ---
+# Box2D
+if(APPLE)
+  set(BOX2D_DIR /opt/homebrew/opt/box2d)
+  target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${BOX2D_DIR}/lib/libbox2d.dylib
+    ${BOX2D_DIR}/lib/libbox2d.3.dylib
+    ${BOX2D_DIR}/lib/libbox2d.3.0.0.dylib
+  )
+  target_include_directories(${PROJECT_NAME} PRIVATE ${BOX2D_DIR}/include/box2d)
+  message(STATUS "Box2D found: ${BOX2D_LIBRARY}")
+elseif(WIN32)
+  find_package(box2d CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE box2d::box2d)
+  message(STATUS "Box2D found: ${BOX2D_LIBRARY}")
+endif()
 
+# freetype
+if(WIN32)
+  find_package(freetype-gl CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE freetype-gl)
+  message(STATUS "freetype found")
+elseif(APPLE)
+  set(FREETYPE_DIR /opt/homebrew)
+  target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_DIR}/include/freetype-gl)
+  target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${FREETYPE_DIR}/lib64/libfreetype-gl.a
+  )
+  message(STATUS "freetype found: ${FREETYPE_LIBRARY}")
+endif()
 
-# --- テストの追加 ---
-enable_testing()
+# --- テスト環境のライブラリをリンク ---
+
+# teatsディレクトリのサブモジュールを追加
 add_subdirectory(tests)
 
-# Google Test
-# include(FetchContent)
-# FetchContent_Declare(
-#     googletest
-#     GIT_REPOSITORY https://github.com/google/googletest.git
-#     GIT TAG b514bdc898e2951020cbdca1304b75f5950d1f59 # v1.15.2
-# )
-# FetchContent_MakeAvailable(googletest)
-
-# # テスト用ターゲットの設定
-# # CMake only generates tests if the enable_testing() command has been invoked
-# # TestMain.cppでRUN_ALL_TESTSしているので、TestMain.cppだけを指定すればよい
-# target_link_libraries(${PROJECT_NAME}_tests PRIVATE gtest gtest_main ${PROJECT_NAME})
-# # COMMAND: Specify the test command-line to run
-# add_test(
-#     NAME ${PROJECT_NAME}_tests
-#     COMMAND ${PROJECT_NAME}_tests
-#     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests # しばしば${CMAKE_CURRENT_BINARY_DIR}を使うこともあります。
-# )
+message(STATUS "Configured main project: ${PROJECT_NAME}")
 
 # --- ビルド設定 ---
 # add the binary tree to the search path for include files
 # so that we will find GamePrototypeConfig.h
-target_include_directories(game-prototype PUBLIC
-    "${PROJECT_BINARY_DIR}"
-    "${PROJECT_SOURCE_DIR}"
+target_include_directories(${PROJECT_NAME} PUBLIC
+  "${PROJECT_BINARY_DIR}"
+  "${PROJECT_SOURCE_DIR}"
 )

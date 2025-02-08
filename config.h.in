@@ -1,0 +1,9 @@
+#pragma once
+
+// ゲームのバージョン
+#define game_prototype_VERSION_MAJOR @game_prototype_VERSION_MAJOR@
+#define game_prototype_VERSION_MINOR @game_prototype_VERSION_MINOR@
+
+// OpenGLのバージョン
+#define opengl_version_major @OpenGL_VERSION_MAJOR@
+#define opengl_version_minor @OpenGL_VERSION_MINOR@

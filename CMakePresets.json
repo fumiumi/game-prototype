@@ -2,18 +2,32 @@
   "version": 3,
   "cmakeMinimumRequired": {
       "major": 3,
-      "minor": 15,
+      "minor": 23,
       "patch": 0
   },
   "configurePresets": [
       {
-          "name": "ninja-gcc",
+          "name": "ninja-gcc-macOS",
           "description": "Use Ninja with GCC",
           "generator": "Ninja",
           "binaryDir": "build",
           "cacheVariables": {
               "CMAKE_C_COMPILER": "gcc",
               "CMAKE_CXX_COMPILER": "g++",
+              "CMAKE_BUILD_TYPE": "Debug",
+              "CMAKE_PREFIX_PATH": "/opt/homebrew"
+          }
+      },
+      {
+        "name": "ninja-gcc-Windows",
+          "description": "Use Ninja with GCC",
+          "generator": "Ninja",
+          "binaryDir": "build",
+          "toolchainFile": "C:/Program Files/vcpkg/scripts/buildsystems/vcpkg.cmake",
+          "cacheVariables": {
+              "CMAKE_C_COMPILER": "gcc",
+              "CMAKE_CXX_COMPILER": "g++",
+              "CMAKE_PREFIX_PATH": "C:/Program Files/vcpkg/installed/x64-mingw-dynamic",
               "CMAKE_BUILD_TYPE": "Debug"
           }
       }
