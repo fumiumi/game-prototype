@@ -11,8 +11,8 @@ class Shader
 public:
     /// @brief コンストラクタ
     /// @param filePath GLSLソースファイルのパス
-    /// @param type GL_VERTEX_SHADER, GL_FRAGMENT_SHADERなど
-    /// @throws std::runtime_error コンパイル失敗時
+    /// @param type プログラマブルシェーダータイプ
+    /// @throws std::runtime_error
     Shader(const std::string& filePath, GLenum type);
 
     ~Shader();
