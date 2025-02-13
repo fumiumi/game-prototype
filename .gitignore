@@ -43,3 +43,7 @@ build/
 
 # macOS
 .DS_Store
+
+# debug
+debug/
+log/

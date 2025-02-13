@@ -32,7 +32,7 @@ add_subdirectory(${SOURCE_DIR})
 # add_subdirectory(tests)
 
 add_executable(${PROJECT_NAME}
-  ${SOURCE_DIR}/Main.cpp
+  ${SOURCE_DIR}/main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE engine_renderer_shader)
