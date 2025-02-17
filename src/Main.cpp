@@ -15,8 +15,8 @@
 static const int WINDOW_WIDTH = 1200;
 static const int WINDOW_HEIGHT = 800;
 
-std::string TRIANGLE_VERT_PATH = "/Users/kawaguchibunnari/git/game-prototype/shaders/triangle/TriangleVertex.glsl";
-std::string TRIANGLE_FRAG_PATH = "/Users/kawaguchibunnari/git/game-prototype/shaders/triangle/TriangleFragment.glsl";
+std::string TRIANGLE_VERT_PATH = static_cast<std::string>(PROJECT_PATH)  + "/shaders/triangle/TriangleVertex.glsl";
+std::string TRIANGLE_FRAG_PATH = static_cast<std::string>(PROJECT_PATH)  + "/shaders/triangle/TriangleFragment.glsl";
 
 void errorCallback(int error, const char *description)
 {
