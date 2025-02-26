@@ -105,3 +105,11 @@ jobs:
       - run: cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake .
       - run: cmake --build .
 ```
+
+## プロンプトに使えるツール
+
+### ディレクトリ構造を出力
+
+```zsh
+tree /f
+```
