@@ -7,3 +7,6 @@
 // OpenGLのバージョン
 #define opengl_version_major @OpenGL_VERSION_MAJOR@
 #define opengl_version_minor @OpenGL_VERSION_MINOR@
+
+// プロジェクトのトップレベルディレクトリ
+#define PROJECT_PATH "@CMAKE_CURRENT_SOURCE_DIR@"

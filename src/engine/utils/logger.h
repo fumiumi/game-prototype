@@ -16,7 +16,8 @@ enum class LogLevel
   INFO,
   WARNING,
   ERROR,
-  FATAL
+  FATAL,
+  NUM_LOG_LEVELS
 };
 
 enum class SubSystem
@@ -30,8 +31,19 @@ enum class SubSystem
   SCENE,
   AI,
   UI,
-  NETWORK
+  NETWORK,
+  NUM_SUBSYSTEMS
 };
+
+inline SubSystem begin(SubSystem) { return SubSystem::CORE; }
+inline SubSystem end(SubSystem) { return SubSystem::NUM_SUBSYSTEMS; }
+
+inline SubSystem& operator++(SubSystem& e)
+{
+    e = static_cast<SubSystem>(static_cast<int>(e) + 1);
+    return e;
+}
+
 
 /// @brief システム内で唯一のロガークラス
 class Logger
