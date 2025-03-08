@@ -1,10 +1,12 @@
 #pragma once
+#include "../engine/core/window.h"
 
+//OFFLINENOTE: これクラスにする必要あるかな？
 class Game
 {
 public:
-    Game();
-    ~Game();
+  Game() = default;
+  ~Game() = default;
 
-    void run();
+  void Run();
 };

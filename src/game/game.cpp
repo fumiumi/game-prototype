@@ -1,14 +1,19 @@
 #include "game.h"
-#include "../utils/logger.h"
-#include "../utils/logfileManager.h"
-#include "../utils/filesystem.h"
 
-
-class Game
+Game::Run()
 {
-public:
-  Game() {}
-  ~Game() {}
+  core::Window window_system = new core::Window();
 
-  void run();
-};
+  window_system.CreateWindow();
+
+  while(!window_system.WindowShouldClose())
+  {
+    window_system.ClearBuffer();
+
+    window_system.SwapBuffers();
+
+    window_system.PollEvents();
+  }
+
+  window_system.TerminateWindow();
+}
