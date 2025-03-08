@@ -35,7 +35,7 @@ public:
   /// @brief glfwWindowShouldClose()のラッパー関数
   /// @return ゲームループを終了するべきかどうか
   bool WindowShouldClose();
-  
+
   /// @brief glfwTerminate()のラッパー関数
   void TerminateWindow();
 
@@ -46,5 +46,5 @@ private:
   void errorCallback(int error, const char *description);
 
   GLFWwindow *window_;
-}
+};
 }

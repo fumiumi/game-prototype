@@ -1,2 +1,5 @@
-add_subdirectory(engine)
+add_subdirectory(
+  engine
+  game
+  )
 # サブディレクトリをここで一括追加する
