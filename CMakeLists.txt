@@ -97,6 +97,17 @@ elseif(WIN32)
   message(STATUS "GLAD found: ${GLAD_LIBRARY}")
 endif()
 
+# Lua
+if(APPLE)
+  find_package(lua REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE lua::lua)
+  message(STATUS "Lua found: ${LUA_LIBRARY}")
+elseif(WIN32)
+  find_package(Lua CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE lua::lua)
+  message(STATUS "Lua found: ${LUA_LIBRARY}")
+endif()
+
 # json
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${EXTERN_DIR}/json
