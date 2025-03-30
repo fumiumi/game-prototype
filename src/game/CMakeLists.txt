@@ -1,8 +1,10 @@
 # src/game/CMakeLists.txt
 
-project(Game)  # プロジェクト名をGameに設定
-add_executable(GameExe 
+project(game)  # プロジェクト名をGameに設定
+add_library(game 
     game.cpp 
  )
- 
-target_link_libraries(GameExe PRIVATE EngineLib)
+
+# エンジンライブラリをリンク
+# これにより、ゲームエンジンを使用することができる
+target_link_libraries(game PRIVATE engine)

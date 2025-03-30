@@ -1,4 +1,4 @@
-
+project(shader)
 # if(APPLE)
 # add_library(engine_renderer_shader
 #   Shader.cpp
