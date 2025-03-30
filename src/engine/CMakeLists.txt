@@ -1,5 +1,4 @@
-# エンジン部分をプロジェクトに追加する
-add_subdirectory(
-  renderer
-  core
-)
+# src/engine/CMakeLists.txt
+project(Engine)  # プロジェクト名をEngineに設定
+add_library(EngineLib STATIC )
+# （EngineLibはエンジン機能をまとめたライブラリターゲット名の例）

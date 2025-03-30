@@ -1,7 +1,7 @@
 #pragma once
 #include "../engine/core/window.h"
 
-//OFFLINENOTE: これクラスにする必要あるかな？
+/// @brief クライアント向けのゲームクラス
 class Game
 {
 public:

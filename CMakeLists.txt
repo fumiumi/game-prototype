@@ -28,6 +28,7 @@ set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 
 # エンジン部分のサブモジュール
 add_subdirectory(${SOURCE_DIR})
+
 # gteatsのサブモジュール
 # add_subdirectory(tests)
 
@@ -35,7 +36,8 @@ add_executable(${PROJECT_NAME}
   ${SOURCE_DIR}/Main.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE engine_renderer_shader)
+# 本来はもっと下の階層のCMakeLists.txtでリンクする
+# target_link_libraries(${PROJECT_NAME} PRIVATE engine_renderer_shader)
 
 # Build typeが指定されていない場合はDebugにしておく（任意）
 if(NOT CMAKE_BUILD_TYPE)
@@ -45,11 +47,12 @@ endif()
 # --- ライブラリの検索とリンク ---
 
 # --- 外部ライブラリの検索パスを追加 ---
+
 # OpenGL
 find_package(OpenGL REQUIRED)
 if(APPLE)
   target_link_libraries(${PROJECT_NAME} PRIVATE "-framework OpenGL")
-else()
+elseif(WIN32)
   target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
 endif()
 message(STATUS "OpenGL found: ${OPENGL_gl_LIBRARY}")
@@ -59,43 +62,10 @@ find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 message(STATUS "GLFW found: ${GLFW_LIBRARY}")
 
-# OpenAL-Soft
-if(WIN32)
-  find_package(OpenAL CONFIG REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
-  message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
-elseif(APPLE)
-  find_package(OpenAL REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE OpenAL::OpenAL)
-  message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
-endif()
-
 # glm
-if(WIN32)
-  find_package(glm CONFIG REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-  message(STATUS "GLM found: ${GLM_LIBRARY}")
-elseif(APPLE)
-  find_package(glm REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-  message(STATUS "GLM found: ${GLM_LIBRARY}")
-endif()
-
-# --- externディレクトリのライブラリをリンク ---
-# externディレクトリを変数に格納
-set(EXTERN_DIR ${PROJECT_SOURCE_DIR}/extern)
-
-# GLAD
-if(APPLE)
-  set(GLAD_LIBRARY ${EXTERN_DIR}/glad)
-  target_include_directories(${PROJECT_NAME} PRIVATE ${GLAD_LIBRARY}/include)
-  target_link_libraries(${PROJECT_NAME} PRIVATE ${GLAD_LIBRARY}/library/libglad.a)
-  message(STATUS "GLAD found: ${GLAD_LIBRARY}")
-elseif(WIN32)
-  find_package(glad CONFIG REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
-  message(STATUS "GLAD found: ${GLAD_LIBRARY}")
-endif()
+find_package(glm REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+message(STATUS "GLM found: ${GLM_LIBRARY}")
 
 # Lua
 if(APPLE)
@@ -103,25 +73,63 @@ if(APPLE)
   target_link_libraries(${PROJECT_NAME} PRIVATE lua::lua)
   message(STATUS "Lua found: ${LUA_LIBRARY}")
 elseif(WIN32)
-  find_package(Lua CONFIG REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE lua::lua)
+  find_package(Lua REQUIRED)
+  target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${LUA_LIBRARIES})
   message(STATUS "Lua found: ${LUA_LIBRARY}")
 endif()
 
+
+# --- externディレクトリのライブラリをリンク ---
+
+# externディレクトリを変数に格納
+set(EXTERN_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/extern/include)
+set(EXTERN_LIB_DIR ${PROJECT_SOURCE_DIR}/extern/lib)
+
+# GLAD
+
+# macos環境ではbrewでgladが使えないので、手動でビルドしたものをexternディレクトリ配下に配置する
+
+# win環境ではvcpkgでインストールしたものを使う
+if(WIN32)
+  find_package(glad CONFIG REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
+  message(STATUS "GLAD found: ${GLAD_LIBRARY}")
+elseif(APPLE)
+  target_include_directories(${PROJECT_NAME} PRIVATE ${EXTERN_INCLUDE_DIR}/glad/include)
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTERN_LIB_DIR}/lib/libglad.a)
+  message(STATUS "GLAD found: ${GLAD_LIBRARY}")
+endif()
+
+# OpenAL-Soft
+
+# OpenALは動的リンクするので、静的ライブラリを指定しているvcpkgは使わない
+# したがって、win環境では手動ビルドしたものをexternディレクトリ配下に配置する
+if(WIN32)
+  target_include_directories(${PROJECT_NAME} PRIVATE ${EXTERN_INCLUDE_DIR}/AL)
+  target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTERN_LIB_DIR}/AL/OpenAL32.dll)
+  message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
+
+elseif(APPLE)
+  # target_include_directories(${PROJECT_NAME} PRIVATE ${EXTERN_INCLUDE_DIR}/AL)
+  # target_link_libraries(${PROJECT_NAME} PRIVATE ${EXTERN_LIB_DIR}/libopenal.dylib)
+  # message(STATUS "OpenAL found: ${OPENAL_LIBRARY}")
+endif()
+
 # json
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${EXTERN_DIR}/json
-)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${EXTERN_INCLUDE_DIR}/json)
 message(STATUS "json.hpp found")
 
 # stb_image
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${EXTERN_DIR}/stb
-)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${EXTERN_INCLUDE_DIR}/stb)
 message(STATUS "stb found")
 
 # --- ローカル環境のライブラリをリンク ---
 # Box2D
+
+# NOTE: これはどうにかできないものか
 if(APPLE)
   set(BOX2D_DIR /opt/homebrew/opt/box2d)
   target_link_libraries(${PROJECT_NAME} PRIVATE
@@ -138,10 +146,13 @@ elseif(WIN32)
 endif()
 
 # freetype
+
 if(WIN32)
-  find_package(freetype-gl CONFIG REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE freetype-gl)
+  find_package(Freetype REQUIRED)
+  target_link_libraries(${PROJECT_NAME} PRIVATE Freetype::Freetype)
   message(STATUS "freetype found")
+
+# NOTE: これはどうにかできないものか
 elseif(APPLE)
   set(FREETYPE_DIR /opt/homebrew)
   target_include_directories(${PROJECT_NAME} PRIVATE ${FREETYPE_DIR}/include/freetype-gl)
