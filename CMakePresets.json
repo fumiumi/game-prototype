@@ -23,7 +23,7 @@
           "description": "Use Ninja with GCC",
           "generator": "Ninja",
           "binaryDir": "build",
-          "toolchainFile": "%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake",
+          "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
           "cacheVariables": {
               "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
               "CMAKE_C_COMPILER": "gcc",
