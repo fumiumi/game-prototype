@@ -99,8 +99,15 @@ endif()
 
 # Lua
 if(APPLE)
-  find_package(lua REQUIRED)
-  target_link_libraries(${PROJECT_NAME} PRIVATE lua::lua)
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(LUA REQUIRED lua) # brew の lua.pc を参照
+
+  target_include_directories(${PROJECT_NAME} PRIVATE
+    ${LUA_INCLUDE_DIRS}
+  )
+  target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${LUA_LIBRARIES}
+  )
   message(STATUS "Lua found: ${LUA_LIBRARY}")
 elseif(WIN32)
   find_package(Lua CONFIG REQUIRED)
