@@ -1,4 +1,6 @@
+#include <iostream>
 #include "window.h"
+
 
 namespace core
 {
@@ -30,12 +32,12 @@ int Window::CreateWindow()
   {
     //OFFLINENOTE: TODO: ロガーシステムに差し替える
     std::cerr << "Failed to create window" << std::endl;
-    TerminateWindow()
+    TerminateWindow();
     return -1;
   }
   
   // コンテキストの生成
-  glfwMakeContextCurrent(window);
+  glfwMakeContextCurrent(window_);
   
   // GLADの初期化
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -63,8 +65,8 @@ int Window::CreateWindow()
     glGetProgramInfoLog(programID, logLength, nullptr, &programLog[0]);
     std::cerr << "Program linking failed:\n"
     << programLog << std::endl;
-    glfwDestroyWindow(window);
-    TerminateWindow()
+    glfwDestroyWindow(window_);
+    TerminateWindow();
     return -1;
   } 
 }

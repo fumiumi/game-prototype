@@ -2,4 +2,7 @@
 #   Renderer.cpp
 # )
 
-add_subdirectory(shader)
+project(renderer)
+add_library(renderer
+  Renderer.cpp
+)
